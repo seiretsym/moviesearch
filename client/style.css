@@ -1,0 +1,309 @@
+* {
+    scrollbar-width: none;
+
+    -webkit-scrollbar {
+        display: none;
+    }
+
+    -ms-overflow-style: none;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #111;
+    color: #eee;
+}
+
+header {
+    text-align: center;
+    font-weight: bold;
+}
+
+nav {
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin-top: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+
+input {
+    border: none;
+    padding: 6px 12px;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+}
+
+nav input {
+    width: 400px;
+    box-sizing: border-box;
+}
+
+nav input:focus+.theatre-list {
+    display: block;
+}
+
+.theatre-list {
+    position: absolute;
+    top: 45px;
+    background-color: #444;
+    width: 400px;
+    display: none;
+    z-index: 2;
+}
+
+.theatre-list:active {
+    display: block;
+}
+
+.theatre-list ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    width: 400px;
+    max-height: 150px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+
+.theatre-list ul li {
+    width: 100%;
+    padding: 6px 12px;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.theatre-list ul li:hover {
+    background-color: #555;
+}
+
+.showtimes-calendar .container {
+    display: flex;
+    max-width: 1280px;
+    margin: 1rem auto 0;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.showtimes-calendar .container .month {
+    padding: 1rem 2rem;
+    text-align: center;
+    width: 100%;
+    font-size: 24px;
+    background-color: #333;
+}
+
+.showtimes-calendar .container .dateLabels {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: .25rem;
+}
+
+.showtimes-calendar .container .dateLabels>div {
+    padding: 1rem 0;
+    flex: 1 1;
+    width: 100%;
+    background-color: #333;
+}
+
+.showtimes-calendar .container .dates {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+
+.showtimes-calendar .container .dates>div {
+    position: relative;
+    flex: 1 1;
+    background-color: #333;
+    height: 150px;
+    min-width: calc(100% / 7 - 1.5rem);
+    max-width: 179.44px;
+    overflow: hidden;
+}
+
+.showtimes-calendar .container .dates>div>span.date {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 70px;
+    font-weight: bold;
+    pointer-events: none;
+    opacity: 0.5;
+    color: #000;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    line-height: 0.75;
+}
+
+.showtimes-calendar .container .dates>div>span.date.noshow {
+    color: #330000;
+}
+
+.showtimes-calendar .container .dates>div>.showtimes {
+    position: relative;
+    overflow-y: scroll;
+    height: 150px;
+}
+
+.showtimes-calendar .container .dates>div>.showtimes>.showtime {
+    position: relative;
+    font-weight: bold;
+    background-color: #99999925;
+    margin: .125rem 0;
+    color: #999;
+    padding: .25rem 0 .25rem .5rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.showtimes-calendar .container .dates>div>.showtimes>.showtime:first-child {
+    margin-top: 0;
+}
+
+.showtimes-calendar .container .dates>div>.showtimes>.showtime:last-child {
+    margin-bottom: 0;
+}
+
+.filters {
+    position: relative;
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 1280px;
+    margin: 1rem auto 0;
+}
+
+.filters .filter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
+}
+
+.list {
+    position: absolute;
+    background-color: #444;
+    display: none;
+    max-height: 150px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    pointer-events: none;
+    width: 100%;
+    top: 45px;
+    z-index: 2;
+}
+
+.list:active {
+    display: block;
+}
+
+.list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list ul li {
+    padding: 6px 12px;
+    cursor: pointer;
+    pointer-events: auto;
+    text-transform: capitalize;
+}
+
+.list ul li:hover {
+    background-color: #555;
+}
+
+input:focus+.list {
+    display: block;
+}
+
+.popup-backdrop {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    background-color: #00000050;
+    z-index: 100;
+}
+
+.popup-container {
+    position: relative;
+    display: inline-block;
+    background-color: #666;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 15px;
+    padding: 10px;
+    min-width: 768px;
+}
+
+.popup-container .exit {
+    position: absolute;
+    top: -12.5px;
+    right: -5.5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.popup-container .title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.popup-container ul {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-container ul li {
+    position: relative;
+    display: inline-block;
+}
+
+.popup-container li .attributes {
+    transform: translateX(125%);
+    display: none;
+    flex-direction: column;
+    background-color: #999;
+    border-radius: 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    box-sizing: border-box;
+}
+
+.popup-container li:hover .attributes {
+    display: flex;
+}
+
+.popup-container li .attributes span {
+    white-space: nowrap;
+    padding: 6px 12px;
+}
