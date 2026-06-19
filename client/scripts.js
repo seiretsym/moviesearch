@@ -58,58 +58,10 @@ const getShowtimes = async (id) => {
     const data = await res.json();
     const { showtimes } = data._embedded;
     state.showtimes = showtimes;
-    populateFilters(showtimes);
     buildCalendar(showtimes);
   } catch (err) {
     console.error(err.message)
   }
-}
-
-const populateFilters = (showtimes) => {
-  // clear filter before populating
-  state.filters = {
-    attribute: [],
-    movie: [],
-    genre: []
-  };
-
-  // update state with filter info
-  for (const showtime of showtimes) {
-    const { attributes, genre, movieName, movieId } = showtime;
-    for (const attribute of attributes) {
-      const { name } = attribute;
-      if (!state.filters.attribute.includes(name)) {
-        state.filters.attribute.push(name);
-      }
-    }
-    if (!state.filters.genre.includes(genre)) {
-      state.filters.genre.push(genre);
-    }
-    if (!state.filters.movie.includes(movieName)) {
-      state.filters.movie.push(movieName);
-    }
-  }
-
-  // populate filter fields
-  for (const key in state.filters) {
-    const target = document.querySelector(`.${key}.list`);
-    target.replaceChildren();
-    const ul = document.createElement("ul");
-    for (const filter of state.filters[key]) {
-      const li = document.createElement("li");
-      li.textContent = filter;
-      li.addEventListener("click", (e) => {
-        const input = document.querySelector(`input[name=${key}]`);
-        input.value = filter;
-        filterShowtimes();
-      })
-      ul.append(li);
-    }
-    target.append(ul);
-  }
-
-  const filters = document.querySelector(".filters");
-  filters.style.display = "flex";
 }
 
 const buildCalendar = (showtimes) => {
@@ -217,17 +169,39 @@ const buildCalendar = (showtimes) => {
           movies[name] = [showtime];
         }
       }
+      const filteredMovies = {};
+
+      // filter the movies by open caption;
+      for (const key in movies) {
+        const filter = movies[key].filter(movie => JSON.stringify(movie.attributes).toLowerCase().includes("open caption"));
+        if (filter.length > 0) {
+          if (filteredMovies[key]) {
+            filteredMovies[key].push(filter);
+          } else {
+            filteredMovies[key] = [filter];
+          }
+        }
+      }
 
       // loop through the movies and generate the list
       const div1 = document.createElement("div");
       div1.classList.add("showtimes");
-      for (const key in movies) {
+      for (const key in filteredMovies) {
         const div2 = document.createElement("div");
         div2.classList.add("showtime");
         div2.textContent = key;
         div2.title = key;
-        div2.addEventListener("click", () => showtimeDetails(movies[key], key));
         div1.append(div2);
+        for (const movie of filteredMovies[key]) {
+          console.log(movie);
+          for (const showtime of movie) {
+            const div3 = document.createElement("div");
+            div3.classList.add("time");
+            div3.textContent = new Date(showtime.showDateTimeLocal).toLocaleTimeString();
+            div1.append(div3);
+          }
+        }
+
       }
       div.append(div1);
       dates.append(div);
@@ -278,141 +252,6 @@ const filterTheatres = (str) => {
     }
   })
   populateTheatreList(filter);
-}
-
-const filterShowtimes = () => {
-  const inputs = document.querySelectorAll(".filter input");
-  let filter = state.showtimes;
-  for (const input of inputs) {
-    if (input.value.length > 0) {
-      filter = filter.filter(showtime => {
-        const stringJSON = JSON.stringify(showtime).toLowerCase();
-        if (stringJSON.includes(input.value.toLowerCase())) {
-          return showtime;
-        }
-      })
-    }
-  }
-  populateFilters(filter);
-  buildCalendar(filter);
-}
-
-const filterType = (type, str) => {
-  const target = document.querySelector(`.${type}`);
-  target.replaceChildren();
-  const filters = state.filters[type].filter(filter => {
-    if (filter.toLowerCase().includes(str.toLowerCase()) || !str) {
-      return filter;
-    }
-  })
-  const ul = document.createElement("ul");
-  for (const filter of filters) {
-    const li = document.createElement("li");
-    li.textContent = filter;
-    li.addEventListener("click", (e) => {
-      const input = document.querySelector(`input[name=${type}]`);
-      input.value = filter;
-      filterShowtimes();
-    })
-    ul.append(li);
-  }
-  target.append(ul);
-}
-
-const repopulateFilter = (key) => {
-  // update state with filter info
-  for (const showtime of state.showtimes) {
-    const { attributes, genre, movieName, movieId } = showtime;
-    switch (key) {
-      case 'attribute':
-        for (const attribute of attributes) {
-          const { name } = attribute;
-          if (!state.filters.attribute.includes(name)) {
-            state.filters.attribute.push(name);
-          }
-        }
-        break;
-      case 'movie':
-        if (!state.filters.movie.includes(movieName)) {
-          state.filters.movie.push(movieName);
-        }
-        break;
-      case 'genre':
-        if (!state.filters.genre.includes(genre)) {
-          state.filters.genre.push(genre);
-        }
-        break;
-    }
-  }
-
-  // populate filter fields
-  const target = document.querySelector(`.${key}.list`);
-  target.replaceChildren();
-  const ul = document.createElement("ul");
-  for (const filter of state.filters[key]) {
-    const li = document.createElement("li");
-    li.textContent = filter;
-    li.addEventListener("click", (e) => {
-      const input = document.querySelector(`input[name=${key}]`);
-      input.value = filter;
-      filterShowtimes();
-    })
-    ul.append(li);
-  }
-  target.append(ul);
-  filterShowtimes();
-}
-
-const showtimeDetails = (showtimes, name) => {
-  // create the popup
-  const backdrop = document.createElement("div");
-  backdrop.classList.add("popup-backdrop");
-  backdrop.addEventListener("click", (e) => backdrop.remove())
-  const container = document.createElement("div");
-  container.classList.add("popup-container");
-
-  // close button
-  const exit = document.createElement("div");
-  exit.textContent = "x";
-  exit.classList.add("exit");
-  exit.addEventListener("click", (e) => backdrop.remove())
-  container.append(exit);
-
-  // build the info
-  const title = document.createElement("div");
-  title.classList.add("title");
-  title.textContent = `Title: ${name}`;
-  container.append(title)
-
-  // create the showtime list
-  const p = document.createElement("p");
-  p.classList.add("showtimes");
-  p.textContent = "Showtimes";
-  container.append(p);
-  const ul = document.createElement("ul");
-
-  // loop showtimes
-  for (const showtime of showtimes) {
-    // details we want...
-    const { showDateTimeLocal, attributes } = showtime;
-    const time = new Date(showDateTimeLocal).toLocaleTimeString();
-
-    const li = document.createElement("li");
-    li.textContent = `${time} >`;
-
-    const div = document.createElement("div");
-    div.classList.add("attributes");
-    for (const attr of attributes) {
-      const span = document.createElement("span");
-      span.textContent = attr.name;
-      div.append(span)
-    }
-    li.append(div);
-    ul.append(li);
-  }
-  container.append(ul)
-  backdrop.append(container)
-  document.body.append(backdrop);
 }
 
 getTheatres();

@@ -171,7 +171,6 @@ nav input:focus+.theatre-list {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: pointer;
 }
 
 .showtimes-calendar .container .dates>div>.showtimes>.showtime:first-child {
@@ -182,21 +181,20 @@ nav input:focus+.theatre-list {
     margin-bottom: 0;
 }
 
-.filters {
+.showtimes-calendar .container .dates>div>.showtimes>.time {
     position: relative;
-    display: none;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    max-width: 1280px;
-    margin: 1rem auto 0;
+    text-align: left;
+    padding-left: 1.5rem;
+    overflow: hidden;
 }
 
-.filters .filter {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1;
+.showtimes-calendar .container .dates>div>.showtimes>.time::before {
+    content: "⤷";
+    position: absolute;
+    top: -0.575rem;
+    left: .25rem;
+    line-height: 1;
+    font-size: 2rem;
 }
 
 .list {
