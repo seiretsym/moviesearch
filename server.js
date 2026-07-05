@@ -15,29 +15,28 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'client')));
 
-// app.get("/api/getTheatres", (req, res) => {
-//   // amc api stuff goes here
-//   const url = "https://api.amctheatres.com/v2/theatres";
+app.get("/api/getTheatres", (req, res) => {
+  // amc api stuff goes here
+  const url = "https://api.amctheatres.com/v2/theatres";
 
-//   const params = {
-//     "page-size": 1000
-//   }
-//   axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
-// })
+  const params = {
+    "page-size": 1000
+  }
+  axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
+})
 
-// app.get("/api/getShowtimes", (req, res) => {
-//   const { id } = req.query;
-//   const url = `https://api.amctheatres.com/v2/theatres/${id}/showtimes`;
+app.get("/api/getShowtimes", (req, res) => {
+  const { id } = req.query;
+  const url = `https://api.amctheatres.com/v2/theatres/${id}/showtimes`;
 
-//   const params = {
-//     "page-size": 10000
-//   }
+  const params = {
+    "page-size": 10000
+  }
 
-//   axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
-// })
+  axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
+})
 
 app.get(/(.*)/, (req, res) => {
-  // res.send("<h1>Hello</h1>");
   res.sendFile(path.join(__dirname, "client", "index.html"));
 })
 
