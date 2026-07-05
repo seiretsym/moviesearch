@@ -17,7 +17,7 @@ app.use(express.static('client'));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./client/index.html"));
-})
+}).catch(err => console.log(err));
 
 app.get("/api/getTheatres", (req, res) => {
   // amc api stuff goes here
