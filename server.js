@@ -16,8 +16,15 @@ app.use(express.json());
 app.use(express.static('client'));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/index.html"));
-}).catch(err => console.log(err));
+  res.sendFile(path.join(__dirname, "./client/index.html"), {}, err => {
+    if (err) {
+      console.log(err);
+      res.status(err.status).end();
+    } else {
+      console.log("success");
+    }
+  });
+})
 
 app.get("/api/getTheatres", (req, res) => {
   // amc api stuff goes here
