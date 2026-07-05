@@ -37,7 +37,7 @@ app.get("/api/getShowtimes", (req, res) => {
 })
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/", "index.html"), {}, err => {
+  res.sendFile(path.join(__dirname, "client", "index.html"), {}, err => {
     if (err) {
       console.log(err);
       res.status(err.status).end();
