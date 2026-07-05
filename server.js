@@ -4,16 +4,16 @@ const axios = require('axios');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT;
-// const apiKey = process.env.API_KEY;
+const apiKey = process.env.API_KEY;
 
-// // header info
-// const header = {
-//   "X-AMC-Vendor-Key": apiKey
-// }
+// header info
+const header = {
+  "X-AMC-Vendor-Key": apiKey
+}
 
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
-// app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'client')));
 
 // app.get("/api/getTheatres", (req, res) => {
 //   // amc api stuff goes here
@@ -37,8 +37,8 @@ const PORT = process.env.PORT;
 // })
 
 app.get(/(.*)/, (req, res) => {
-  res.send("<h1>Hello</h1>");
-  // res.sendFile(path.join(__dirname, "client", "index.html"));
+  // res.send("<h1>Hello</h1>");
+  res.sendFile(path.join(__dirname, "client", "index.html"));
 })
 
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
