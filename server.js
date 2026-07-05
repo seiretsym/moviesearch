@@ -37,14 +37,7 @@ app.get("/api/getShowtimes", (req, res) => {
 })
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "index.html"), {}, err => {
-    if (err) {
-      console.log(err);
-      res.status(err.status).end();
-    } else {
-      console.log("success");
-    }
-  });
+  res.sendFile(path.join(__dirname, "client", "index.html"));
 })
 
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
