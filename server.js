@@ -15,17 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('client'));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/index.html"), {}, err => {
-    if (err) {
-      console.log(err);
-      res.status(err.status).end();
-    } else {
-      console.log("success");
-    }
-  });
-})
-
 app.get("/api/getTheatres", (req, res) => {
   // amc api stuff goes here
   const url = "https://api.amctheatres.com/v2/theatres";
@@ -45,6 +34,17 @@ app.get("/api/getShowtimes", (req, res) => {
   }
 
   axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
+})
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/", "index.html"), {}, err => {
+    if (err) {
+      console.log(err);
+      res.status(err.status).end();
+    } else {
+      console.log("success");
+    }
+  });
 })
 
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
