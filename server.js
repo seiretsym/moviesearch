@@ -36,7 +36,7 @@ app.get("/api/getShowtimes", (req, res) => {
   axios.get(url, { headers: header, params: params }).then(({ data }) => res.json(data))
 })
 
-app.get("*", (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, "client", "index.html"));
 })
 
