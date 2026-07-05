@@ -13,7 +13,7 @@ const header = {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('client'));
+app.use(express.static(path.join(__dirname, 'client')));
 
 app.get("/api/getTheatres", (req, res) => {
   // amc api stuff goes here
