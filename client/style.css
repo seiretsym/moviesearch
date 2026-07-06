@@ -305,3 +305,52 @@ input:focus+.list {
     white-space: nowrap;
     padding: 6px 12px;
 }
+
+@media (max-width:767px) {
+    nav input {
+        width: 75%;
+    }
+
+    .showtimes-calendar .container .dates>div>.showtimes {
+        position: relative;
+        overflow: hidden;
+        height: auto;
+    }
+
+    .showtimes-calendar .container .dateLabels {
+        display: none;
+    }
+
+    .showtimes-calendar .container .month {
+        padding: 1rem 2rem;
+        text-align: center;
+        width: 100%;
+        font-size: 24px;
+        background-color: #333;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        border-bottom: 5px solid black;
+    }
+
+    .showtimes-calendar .container .dates>div>.showtimes {
+        position: relative;
+        height: auto;
+    }
+
+    .showtimes-calendar .container .dates>div {
+        position: relative;
+        background-color: #333;
+        overflow: hidden;
+        width: 100%;
+        margin: .5rem 0;
+        flex: none;
+        max-width: 100%;
+        height: auto;
+        min-height: 75px;
+    }
+
+    .showtimes-calendar .container .dates>div:empty {
+        display: none;
+    }
+}
