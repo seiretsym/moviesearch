@@ -184,17 +184,12 @@ nav input:focus+.theatre-list {
 .showtimes-calendar .container .dates>div>.showtimes>.time {
     position: relative;
     text-align: left;
-    padding-left: 1.5rem;
-    overflow: hidden;
 }
 
 .showtimes-calendar .container .dates>div>.showtimes>.time::before {
-    content: "⤷";
-    position: absolute;
-    top: -0.575rem;
-    left: .25rem;
-    line-height: 1;
-    font-size: 2rem;
+    content: "·";
+    position: relative;
+    padding: 0 0.5rem;
 }
 
 .list {
