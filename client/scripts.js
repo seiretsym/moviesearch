@@ -49,7 +49,6 @@ const getTheatres = async () => {
 
 // hit backend for showtimes based on selected theatre
 const getShowtimes = async (id) => {
-  console.log(id);
   try {
     const res = await fetch(`/api/getShowtimes?id=${id}`)
     if (!res.ok) {
@@ -98,7 +97,6 @@ const buildCalendar = (showtimes) => {
       }
     }
   }
-  console.log(state.calendar)
 
   // build the calendar
   const target = document.querySelector(".showtimes-calendar");
