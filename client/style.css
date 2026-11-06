@@ -31,6 +31,7 @@ nav {
 }
 
 input {
+    font-size: 16px;
     border: none;
     padding: 6px 12px;
     box-sizing: border-box;
@@ -55,7 +56,7 @@ nav input:focus+.theatre-list {
     background-color: #444;
     width: 400px;
     display: none;
-    z-index: 2;
+    z-index: 5;
 }
 
 .theatre-list:active {
@@ -153,6 +154,7 @@ nav input:focus+.theatre-list {
 .showtimes-calendar .container .dates>div>span.date.noshow {
     color: #330000;
 }
+
 
 .showtimes-calendar .container .dates>div>.showtimes {
     position: relative;
@@ -325,6 +327,7 @@ input:focus+.list {
         position: sticky;
         top: 0;
         z-index: 2;
+        border-top: 5px solid black;
         border-bottom: 5px solid black;
     }
 
@@ -345,7 +348,8 @@ input:focus+.list {
         min-height: 75px;
     }
 
-    .showtimes-calendar .container .dates>div:empty {
+    .showtimes-calendar .container .dates>div:empty,
+    .showtimes-calendar .container .dates>div:has(.noshow) {
         display: none;
     }
 }
