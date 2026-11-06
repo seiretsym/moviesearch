@@ -49,6 +49,7 @@ const getTheatres = async () => {
 
 // hit backend for showtimes based on selected theatre
 const getShowtimes = async (id) => {
+  console.log(id);
   try {
     const res = await fetch(`/api/getShowtimes?id=${id}`)
     if (!res.ok) {
@@ -70,22 +71,34 @@ const buildCalendar = (showtimes) => {
   const dayLong = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   // parse the entire fucking json and organize the data
   for (const showtime of showtimes) {
-    const date = new Date(showtime.showDateTimeLocal);
-    const month = date.getMonth();
-    const day = date.getDate();
-
-    if (state.calendar[month]) {
-      if (state.calendar[month][day]) {
-        state.calendar[month][day].push(showtime);
+    // sort by open caption only
+    if (isOpenCaption(showtime)) {
+      const date = new Date(showtime.showDateTimeLocal);
+      const month = date.getMonth();
+      const day = date.getDate();
+      const year = date.getFullYear();
+      if (state.calendar[year]) {
+        if (state.calendar[year][month]) {
+          if (state.calendar[year][month][day]) {
+            state.calendar[year][month][day].push(showtime);
+          } else {
+            state.calendar[year][month][day] = [showtime];
+          }
+        } else {
+          state.calendar[year][month] = {
+            [day]: [showtime]
+          }
+        }
       } else {
-        state.calendar[month][day] = [showtime];
-      }
-    } else {
-      state.calendar[month] = {
-        [day]: [showtime]
+        state.calendar[year] = {
+          [month]: {
+            [day]: [showtime]
+          }
+        }
       }
     }
   }
+  console.log(state.calendar)
 
   // build the calendar
   const target = document.querySelector(".showtimes-calendar");
@@ -94,129 +107,119 @@ const buildCalendar = (showtimes) => {
   target.replaceChildren();
 
   // loop through the calendar
-  for (const key in state.calendar) {
-    // container
-    const container = document.createElement("div");
-    container.classList.add("container");
+  for (const year in state.calendar) {
+    for (const month in state.calendar[year]) {
+      // build the year first
+      // container
+      const container = document.createElement("div");
+      container.classList.add("container");
 
-    // build month
-    const monthEl = document.createElement("div");
-    monthEl.classList.add("month")
-    monthEl.textContent = monthNames[key];
-    container.append(monthEl);
+      // build month
+      const monthEl = document.createElement("div");
+      monthEl.classList.add("month")
+      monthEl.textContent = `${monthNames[month]} ${year}`;
+      container.append(monthEl);
 
-    // build labels
-    const label = document.createElement("div");
-    label.classList.add("dateLabels");
-    for (let i = 0; i < dayLong.length; i++) {
-      const labelDate = document.createElement("div");
-      labelDate.textContent = dayLong[i];
-      label.append(labelDate);
-    }
-    container.append(label);
-
-    // build days
-    const dates = document.createElement("div");
-    dates.classList.add("dates");
-    const days = Object.entries(state.calendar[key]);
-    for (const [i, [d, showtimes]] of days.entries()) {
-      const date = new Date(`${monthNames[key]} ${d} 2026`);
-      const day = date.getDay();
-
-      // if current day of week is not sunday, build the prior day slots
-      if (i === 0 && day > 0) {
-        for (let j = 0; j < day; j++) {
-          // create blank slots
-          const div = document.createElement("div");
-          dates.append(div);
-        }
+      // build labels
+      const label = document.createElement("div");
+      label.classList.add("dateLabels");
+      for (let i = 0; i < dayLong.length; i++) {
+        const labelDate = document.createElement("div");
+        labelDate.textContent = dayLong[i];
+        label.append(labelDate);
       }
+      container.append(label);
 
+      // build days
+      const dates = document.createElement("div");
+      dates.classList.add("dates");
+      const days = Object.entries(state.calendar[year][month]);
+      for (const [i, [d, showtimes]] of days.entries()) {
+        const date = new Date(`${monthNames[month]} ${d} 2026`);
+        const day = date.getDay();
 
-      // now build the current date and onwards
-      const div = document.createElement("div");
-      const span = document.createElement("span");
-      span.classList.add("date");
-      span.textContent = d;
-      div.append(span);
-
-      // check the date compared to previous date
-      if (i > 0) {
-        const [prevDay] = days[i - 1];
-        const diff = d - prevDay;
-        if (diff > 1) {
-          for (let z = 1; z < diff; z++) {
+        // if current day of week is not sunday, build the prior day slots
+        if (i === 0 && day > 0) {
+          for (let j = 0; j < day; j++) {
             // create blank slots
             const div = document.createElement("div");
-            const span = document.createElement("span");
-            span.classList.add("date", "noshow")
-            span.textContent = parseInt(prevDay) + parseInt(z);
-            div.append(span);
             dates.append(div);
           }
         }
-      }
 
-      // do something with the showtimes here
-      const movies = {};
 
-      // sort showtimes by movie names
-      for (const showtime of showtimes) {
-        const { movieName: name } = showtime;
-        if (movies[name]) {
-          movies[name].push(showtime);
-        } else {
-          movies[name] = [showtime];
-        }
-      }
-      const filteredMovies = {};
+        // now build the current date and onwards
+        const div = document.createElement("div");
+        const span = document.createElement("span");
+        span.classList.add("date");
+        span.textContent = d;
+        div.append(span);
 
-      // filter the movies by open caption;
-      for (const key in movies) {
-        const filter = movies[key].filter(movie => JSON.stringify(movie.attributes).toLowerCase().includes("open caption"));
-        if (filter.length > 0) {
-          if (filteredMovies[key]) {
-            filteredMovies[key].push(filter);
-          } else {
-            filteredMovies[key] = [filter];
+        // check the date compared to previous date
+        if (i > 0) {
+          const [prevDay] = days[i - 1];
+          const diff = d - prevDay;
+          if (diff > 1) {
+            for (let z = 1; z < diff; z++) {
+              // create blank slots
+              const div = document.createElement("div");
+              const span = document.createElement("span");
+              span.classList.add("date", "noshow")
+              span.textContent = parseInt(prevDay) + parseInt(z);
+              div.append(span);
+              dates.append(div);
+            }
           }
         }
-      }
 
-      // loop through the movies and generate the list
-      const div1 = document.createElement("div");
-      div1.classList.add("showtimes");
-      for (const key in filteredMovies) {
-        const div2 = document.createElement("div");
-        div2.classList.add("showtime");
-        div2.textContent = key;
-        div2.title = key;
-        div1.append(div2);
-        for (const movie of filteredMovies[key]) {
-          console.log(movie);
-          for (const showtime of movie) {
+        // do something with the showtimes here
+        const movies = {};
+
+        // sort showtimes by movie names
+        for (const showtime of showtimes) {
+          const { movieName: name } = showtime;
+          if (movies[name]) {
+            movies[name].push(showtime);
+          } else {
+            movies[name] = [showtime];
+          }
+        }
+
+        // loop through the movies and generate the list
+        const div1 = document.createElement("div");
+        div1.classList.add("showtimes");
+        for (const movie in movies) {
+          const div2 = document.createElement("div");
+          div2.classList.add("showtime");
+          div2.textContent = movie;
+          div2.title = movie;
+          div1.append(div2);
+          for (const showtime of movies[movie]) {
             const div3 = document.createElement("div");
             div3.classList.add("time");
             div3.textContent = new Date(showtime.showDateTimeLocal).toLocaleTimeString();
             div1.append(div3);
           }
         }
+        div.append(div1);
+        dates.append(div);
 
-      }
-      div.append(div1);
-      dates.append(div);
-
-      // fill the remaining slots
-      if (i === Object.keys(state.calendar[key]).length - 1) {
-        for (let j = day; j < 6; j++) {
-          const div = document.createElement("div");
-          dates.append(div);
+        // fill the remaining slots
+        if (i === Object.keys(state.calendar[year][month]).length - 1) {
+          for (let j = day; j < 6; j++) {
+            const div = document.createElement("div");
+            dates.append(div);
+          }
         }
       }
+      container.append(dates)
+      target.append(container);
     }
-    container.append(dates)
-    target.append(container);
   }
+}
+
+const isOpenCaption = (showtime) => {
+  return JSON.stringify(showtime.attributes).toLowerCase().includes("open caption");
 }
 
 const populateTheatreList = (theatreList) => {
